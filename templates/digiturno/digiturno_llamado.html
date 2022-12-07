@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="Jorge Andres Patiño">
+        <title>Digiturno SEG S.A.S</title>
+        <link rel="icon" href="/static/img/favicon.png">
+        <link href="/static/src/bootstrap-4/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/src/font-awesome/css/all.css" rel="stylesheet">
+        <link href="/static/src/notificacion/css/animate.css" rel="stylesheet">
+
+        <style>
+            ::-webkit-scrollbar {
+                width: 5px;
+            }
+            ::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+                border-radius: 10px;
+            }
+            ::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                -webkit-box-shadow: inset 0 0 7px rgba(37, 102, 204, 0.99);
+            }
+            .pte-3{
+                padding-top: 14px;
+            }
+            .flotante {
+                display:block;
+                position:fixed;
+                top:100px;
+                right:0px;
+            }
+            .flotante-left {
+                display:block;
+                position:fixed;
+                top:100px;
+                left:0px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="d-flex flex-column flex-md-row align-items-center px-md-4 mb-0 bg-white border-bottom shadow-sm">
+            <img class="my-0 mr-md-auto" src="/static/img/logo3.png" style="width:15%">
+            <i id="ticket" class="fa fa-ticket-alt fa-2x pr-5"></i>
+            <i id="tvs" class="fa fa-tv fa-2x pr-5"></i>
+            <a class="pr-2">
+                <i class="fa fa-user">&emsp;</i>{{ user.first_name }} {{ user.last_name }}
+            </a>
+            <button class="btn btn-outline-primary" id="no_modulo" value="{{ modulo }}">Salir</button>
+        </div>
+
+        <div class="pricing-header px-3 py-3 pt-md-1 pb-md-1 mx-auto text-center">
+            <h1 class="display-4">Modulo de Turnos Consulta Externa</h1>
+            <p style="font-size: 12pt; font-weight: 900;color: #ffffff;">Modulo: {{ modulo }}</p>
+        </div>
+
+        <div class="container">
+            <div class="card-deck mb-0 text-center justify-content-center">
+                <div class="row">
+                    {% for s in servicios %}
+                        <div class="col-md-4 col-sm-6 col-12">
+                            <div class="card mb-4 shadow-sm border-success" id="card-{{ s.id }}">
+                                <div class="card-header border-info alert-success p-2">
+                                    <h4 class="my-0 font-weight-normal" style="font-size: 14pt;font-weight: 900 !important;">{{ s.servicio }}</h4>
+                                    <a style="font-size: 9pt;font-weight: 700">Turnos por atender: </a> <a class="btn btn-secondary text-white" style="border-radius: 95px; font-size: 10pt; font-weight: 900; padding: .2rem .4rem;" id="tp-{{ s.id }}"></a>
+                                </div>
+                                <div class="card-body" style="overflow-y: scroll; height: 250px;color:#ffffff" id="list-{{ s.id }}"></div>
+                                <div class="card-footer border-success alert-success">
+                                    <button value="{{ s.id }}" type="button" class="btn bt-lg btn-success btn-block atender" style="font-weight: 700;font-size: 16pt;">Atender</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="col-md-4 col-sm-6 col-12">
+                        <div class="card mb-4 shadow-sm border-primary" id="card-preferencial">
+                            <div class="card-header border-info alert-primary p-2">
+                                <h4 class="my-0 font-weight-normal" style="font-size: 14pt;font-weight: 900 !important;">TURNO PREFERENCIAL</h4>
+                                <a style="font-size: 9pt;font-weight: 700">Atención Prioritaria: </a><a class="btn btn-secondary text-white" style="border-radius: 95px; font-size: 10pt; font-weight: 900; padding: .2rem .4rem;" id="tp-preferencial"></a>
+                            </div>
+                            <div class="card-body" style="overflow-y: scroll; height: 250px;color:#ffffff" id="list-preferencial"></div>
+                            <div class="card-footer border-primary alert-primary m-0 p-0">
+                                <p style="font-size: 10pt; font-weight: 600;">Unicamente para personas de la tercera edad, en condición de discapacidad, mujeres embarazadas o con niños de brazos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="pt-0 mt-0 border-top">
+                <div class="row">
+                    <div class="col-12">
+                        <small class="d-block text-center text-muted">Sociedad de Especialistas Girardot S.A.S | ©2019</small>
+                    </div>
+                </div>
+            </footer>
+            <button id="btn-rellamado" value="" class='btn btn-primary flotante' style="border-bottom-left-radius: 20%;border-top-left-radius: 20%; "><i class="fa fa-2x fa-user-check"></i>&emsp;<i id="text-btn-rrellamado" class="text-center" style="font-size: 20pt; font-weight: 700;"></i></button>
+        </div>
+        <script src="/static/src/jquery/jquery.js"></script>
+        <script src="/static/src/bootstrap-4/js/bootstrap.min.js"></script>
+        <script src="/static/src/sweet-alert/js/sweetalert.js"></script>
+        <script src="/static/src/notificacion/bootstrap_notify/bootstrap-notify.min.js"></script>
+        <script src="/static/js/notificacion.js"></script>
+        <script>
+            setInterval( function() {
+                $.ajax({
+                    url:   '{% url "consulta_turnos" %}',
+                    type:  'get',
+                    success:  function (data) {
+                        for (var i = 0, limit = (data.lista).length; i < limit; i++) {
+                            if($('#'+data.lista[i].id).length > 0){
+                                if (data.lista[i].llamado == true) {
+                                    $('#' + data.lista[i].id).remove();
+                                    $('#preferencial' + data.lista[i].id).remove();
+                                }
+                            }else {
+                                if (data.lista[i].llamado == false) {
+                                    var no_turno = data.lista[i].turno;
+                                    if (no_turno < 10) {
+                                        no_turno = "00" + no_turno;
+                                    } else if (no_turno < 100) {
+                                        no_turno = "0" + no_turno;
+                                    }
+                                    if (data.lista[i].general == true) {
+                                        $('#list-' + data.lista[i].servicio).append("<a class='btn btn-block btn-sm btn-secondary text-white' style='font-size:22pt;font-weight: 900;'" +
+                                            " id='" + data.lista[i].id + "'>" + no_turno + "<p style='font-size:8pt;font-weight: normal;'>Hora:&emsp;" + data.lista[i].fecha + "</p></a>");
+                                    }else {
+                                        if ($('#list-' + data.lista[i].servicio).length) {
+                                            $('#list-preferencial').append('<button class="btn btn-block btn-sm btn-primary text-white atenderP" style="font-size:22pt;font-weight: 900;"' +
+                                                ' id="' + data.lista[i].id + '" type="button" value="' + data.lista[i].turno + '">' + no_turno + '' +
+                                                '<p style="font-size:8pt;font-weight: normal;">Hora:&emsp;' + data.lista[i].fecha +
+                                                '<br>' + data.lista[i].servicio_text + '</p></button>');
+                                        }
+                                        $('#tp-preferencial').html($('.atenderP').length);
+                                    }
+                                }
+                            }
+                        }
+                        for (var i = 0, limit = (data.conteo).length; i < limit; i++) {
+                            $('#tp-'+data.conteo[i].servicio).text("");
+                            $('#tp-'+data.conteo[i].servicio).append(data.conteo[i].valor);
+                        }
+                    },
+                });
+            },2000);
+
+            $("#no_modulo").click(function (e) {
+                $.ajax({
+                    url:   '{% url "logout" %}',
+                    type:  'get',
+                    data: {'modulo':$(this).val()},
+                    success:  function (data) {
+                        if (data == 1) {
+                            window.location.reload();
+                        }
+                    }
+                });
+            });
+
+            $(".atender").click(function (e) {
+                if ($("#no_modulo").val() !="" && $(this).val() != ""){
+                    $.ajax({
+                        url:   '{% url "asignar_turnos" %}',
+                        type:  'get',
+                        data: {'servicio':$(this).val(), 'modulo':$("#no_modulo").val()},
+                        success:  function (data) {
+                            if (data != 0) {
+                                if ($('#' + data.id_turno).length > 0) {
+                                    $('#' + data.id_turno).remove();
+                                    $(".atender").attr('disabled', 'disabled');
+                                    setTimeout(function (e) {
+                                        $(".atender").removeAttr('disabled');
+                                    }, 5000);
+                                }
+                                $("#btn-rellamado").removeClass('btn-danger');
+                                $("#btn-rellamado").addClass('btn-primary');
+                                $('#text-btn-rrellamado').text(data.turno);
+                                $('#btn-rellamado').prop('value',data.id_turno);
+                            }else{
+                                window.location.reload();
+                            }
+                        }
+                    });
+                }else{
+                    window.location.reload()
+                }
+            });
+
+            $("#btn-rellamado").click(function (e) {
+                if ($("#no_modulo").val() !="" && $(this).val() !=""){
+                    if ($("#btn-rellamado").hasClass("btn-primary") == true){
+                        $.ajax({
+                            url:   '{% url "rellamar_turno" %}',
+                            type:  'get',
+                            data: {'id_turno':$("#btn-rellamado").val(), 'modulo':$("#no_modulo").val()},
+                            success:  function (data) {
+                                if (data == "ok") {
+                                    notificacion('2','El turno ha sido llamado nuevamente');
+                                    $("#btn-rellamado").removeClass('btn-primary');
+                                    $("#btn-rellamado").addClass('btn-danger');
+                                }
+                            }
+                        });
+                    }else{
+                        $.ajax({
+                            url:   '{% url "rechazo_turno" %}',
+                            type:  'get',
+                            data: {'id_turno':$("#btn-rellamado").val()},
+                            success:  function (data) {
+                                if (data == "ok") {
+                                    notificacion('0','El turno ha sido rechazado');
+                                    $("#btn-rellamado").removeClass('btn-danger');
+                                    $("#btn-rellamado").addClass('btn-primary');
+                                    $("#btn-rellamado").val('');
+                                    $('#text-btn-rrellamado').text("N/D");
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            $("#btn-guardar-agenda").click(function (e) {
+                $.ajax({
+                    url:   '{% url "act_agenda_prog" %}',
+                    type:  'post',
+                    data: $("#form-agenda").serialize(),
+                    success:  function (data) {
+                        if(data == "ok"){
+                            $('#btn-cerrar-agenda').click();
+                            notificacion('2','La Actualización de programación de agendas ha sido realizada');
+                        }else{
+                            $('#btn-cerrar-agenda').click();
+                            notificacion('0','Error, no se ha podido realizar la actualización de la programación de agendas');
+                        }
+                        $("#form-agenda")[0].reset();
+                        $('.box-fecha').css('box-shadow', '');
+                    }
+                });
+            });
+
+            $('.box-fecha').focusout(function (e) {
+                if ($(this).val() != "") {
+                    $(this).css('box-shadow', '0 0 10px #00ff08');
+                }else{
+                    $(this).css('box-shadow', '');
+                }
+            });
+
+            $('body #list-preferencial').on('click','button',function (e) {
+                if ($("#no_modulo").val() !=""){
+                    $.ajax({
+                        url:   '{% url "asignar_turno_preferencial" %}',
+                        type:  'get',
+                        data: {'id_turno':$(this).attr('id'), 'modulo':$("#no_modulo").val()},
+                        success:  function (data) {
+                            if (data.ind == "ok") {
+                                notificacion('2','El turno preferencial ha sido llamado');
+                                 $("#btn-rellamado").removeClass('btn-danger');
+                                $("#btn-rellamado").addClass('btn-primary');
+                                $('#text-btn-rrellamado').text(data.no_turno);
+                                $('#btn-rellamado').prop('value', data.id_turno);
+                                $(this).remove();
+                            }
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

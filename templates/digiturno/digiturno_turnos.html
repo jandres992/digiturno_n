@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="Jorge Andres Patiño">
+        <title>Digiturno SEG S.A.S</title>
+        <link rel="icon" href="/static/img/favicon.png">
+        <link href="/static/src/bootstrap-4/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/src/font-awesome/css/all.css" rel="stylesheet">
+        <link href="/static/src/notificacion/css/animate.css" rel="stylesheet">
+
+        <style>
+            .card-body-icon {
+                /*position: absolute;*/
+                z-index: 0;
+                /*top: -25px;
+                right: -25px;*/
+                font-size: 3.5rem;
+                -webkit-transform: rotate(15deg);
+                -ms-transform: rotate(15deg);
+                transform: rotate(15deg);
+            }
+            .card-body-icon-preferencial {
+                z-index: 0;
+                font-size: 4.1rem;
+            }
+            .flex{
+                display: -ms-flex;
+                display: -webkit-flex;
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+            }
+            :hover{
+                text-decoration: none;
+            }
+            ::-webkit-scrollbar {
+                width: 12px;
+            }
+            ::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+                border-radius: 10px;
+            }
+            ::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                -webkit-box-shadow: inset 0 0 7px rgba(37, 102, 204, 0.99);
+            }
+            .s{
+                background-color: red;
+            }
+            @media print {
+                @page {
+                    margin:3px;
+                    padding: 0px;
+                }
+                .container-fluid {
+                    display:none;
+                }
+                #ticket{
+                    display: block;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-3">
+                        <img class="my-0 mr-md-auto" src="/static/img/logo3.png" style="width:90%">
+                    </div>
+                    <div class="col-9">
+                        <h2 class="mt-3">Asignación de Turnos Servicio Consulta Externa</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12" id="servicios">
+                <div class="row" style="margin-top: 1cm;">
+                    {% for s in servicios %}
+                        <div class="col-12">
+                            <a class="card mb-1 mt-1 seleccion" id="{{ s.id }}" style="text-decoration:none">
+                                <div class="card-body p-0 pl-2 pr-2 text-white" style="background-color: {{ s.color }}">
+                                    <div class="row">
+                                        <div class="col-2 pt-2 p-0 pl-4 card-body-icon">
+                                            <i class="fa fa-fw fa-{{ s.icon }}"></i>
+                                        </div>
+                                        <div class="col-10 flex p-0 m-0 mt-2">
+                                            <p id="text-servicio" style="font-size: 20pt;">{{ s.nombre }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-12" id="tipo_servicio" style="margin-top:30px;display: none">
+                <div class="row">
+                    <div class="col-6">
+                        <a class="card mb-1 mt-1" id="ordinario" style="text-decoration:none">
+                            <div class="card-body p-0 pl-2 pr-2 pb-4 text-white" style="background-color: darkgreen">
+                                <div class="row">
+                                    <div class="col-4 pt-2 p-0 pl-4 card-body-icon-preferencial text-right">
+                                        <i class="fa fa-fw fa-female"></i>
+                                    </div>
+                                    <div class="col-4 pt-2 p-0 pl-4 pr-1 card-body-icon-preferencial text-center">
+                                        <i class="fa fa-fw fa-universal-access"></i>
+                                    </div>
+                                    <div class="col-4 pt-2 p-0 pl-4 pr-1 card-body-icon-preferencial text-left">
+                                        <i class="fa fa-fw fa-male"></i>
+                                    </div>
+                                    <div class="col-12 flex text-center">
+                                        <p class="" style="font-size: 18pt;font-weight: 900; margin-top: 10px;" id="text-ordinario">TURNO GENERAL</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-center alert-success" style="font-size: 14pt; font-weight: 800;">
+                                <br>Turno para personas sin ningún tipo de discapacidad
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a class="card mb-1 mt-1" id="preferencial" style="text-decoration:none">
+                            <div class="card-body p-0 pl-2 pr-2 pb-4 text-white" style="background-color: blue">
+                                <div class="row">
+                                    <div class="col-12 pt-2 p-0 pl-4 text-center">
+                                        <img src="/static/img/preferencial.png" style="height: 100px;">
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        <p style="font-size: 18pt;font-weight: 900; margin-top: 10px;" id="text-preferencial">TURNO PREFERENCIAL</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-center alert-primary" style="font-size: 14pt;font-weight: 800;">
+                                Turno unicamente para personas de la tercera edad, con discapacidad o mujeres en estado de embarazo o con niños de brazos.
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12" style="margin-top: 30px;">
+                        <div class="row justify-content-center align-items-center">
+                            <div class="col-md-4 col-sm-3 col-6">
+                                <a class="card mb-1 mt-1" id="atras" style="text-decoration:none">
+                                    <div class="card-body p-0 pl-2 pr-2 pb-2 text-white" style="background-color: #802128">
+                                        <div class="row">
+                                            <div class="col-md-5 col-12 pt-2 p-0 pl-4 card-body-icon-preferencial">
+                                                <i class="fa fa-fw fa-reply-all"></i>
+                                            </div>
+                                            <div class="col-md-6 col-12 flex p-0 m-0 text-center">
+                                                <p style="font-size: 20pt;font-weight: 900;">Atras</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12" id="ticket" style="font-family: Arial; display: none;">
+            <table style="margin-left: 25px">
+                <tr>
+                    <td><img src="/static/img/logo.png" style="margin-left: -10px" width="1000" height="400"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="font-size: 36pt;font-weight: 600; margin-top:-20px;margin-left:2px" id="aviso_turno"></div>
+                        <div style="font-size: 220pt;font-weight: 900;margin-top: -120px" id="turno"></div>
+                        <div style="font-size: 26pt;margin-top: -115px" id="rango"></div>
+                        <div style="font-size: 26pt;margin-top: -15px" id="fecha"></div>
+                    </td>
+                </tr>
+                <tr>
+                   <td colspan="2">
+                       <div style="font-size: 36pt;margin-top: -30px;" id="aviso_servicio"></div>
+                       <div style="font-size: 46pt;font-weight: 700;margin-top: -5px;" id="servicio"></div>
+                       <div style="font-size: 28pt;font-weight: 800;text-align: center;">UNIDAD OFTALMOLÓGICA DE</div>
+                       <div style="font-size: 28pt;font-weight: 800;text-align: center;margin-top: -17px;">ALTA TECNOLOGIA S.A.S</div>
+                       <div style="font-size: 28pt;align-content: center;">.</div>
+                   </td>
+                </tr>
+            </table>
+        </div>
+        <div class='col-12' style='text-align:center; display: none;' id='loading'>
+            <img class='mt-3' src='/static/img/loading.gif'><br><p style='font-size:24pt;color: darkblue;'>Cargando...</p>
+        </div>
+        <script src="/static/src/jquery/jquery.js"></script>
+        <script src="/static/src/bootstrap-4/js/bootstrap.min.js"></script>
+        <script src="/static/src/sweet-alert/js/sweetalert.js"></script>
+        <script src="/static/src/notificacion/bootstrap_notify/bootstrap-notify.min.js"></script>
+        <script src="/static/js/notificacion.js"></script>
+        <script>
+            $(window).ready(function(){
+                function sleep(milliseconds) {
+                    var start = new Date().getTime();
+                    for (var i = 0; i < 1e7; i++) {
+                        if ((new Date().getTime() - start) > milliseconds){
+                            break;
+                        }
+                    }
+                }
+
+                $(".seleccion").click(function (e) {
+					if ($(this).attr('id') == 5){
+						var tiempo = new Date();
+						var hora = tiempo.getHours();
+						var minuto = tiempo.getMinutes();
+						if(hora >= 12 && minuto <= 0 || hora <= 13 && minuto >= 45 || hora <= 16){
+							sessionStorage.setItem('id_servicio',$(this).attr('id'));
+							$("#text-ordinario").empty();
+							$("#text-preferencial").empty();
+							$("#servicios").hide();
+							$('#loading').show(1).delay(1200).hide(1);
+							$("#tipo_servicio").hide(1).delay(1200).show(1);
+							var servicio = $(this).find("p").text();
+							$("#text-ordinario").append("TURNO GENERAL<br>"+servicio);
+							$("#text-preferencial").append("TURNO PREFERENCIAL<br>"+servicio);
+						}else{
+							alert('En este horario no se puede asignar turnos para el módulo seleccionado');
+						}
+					}else if ($(this).attr('id') == 6){
+						var tiempo = new Date();
+						var hora = tiempo.getHours();
+						var minuto = tiempo.getMinutes();
+						if(hora >= 12 && minuto <= 30 || hora <= 14 && minuto >= 0 || hora <= 17){
+							sessionStorage.setItem('id_servicio',$(this).attr('id'));
+							$("#text-ordinario").empty();
+							$("#text-preferencial").empty();
+							$("#servicios").hide();
+							$('#loading').show(1).delay(1200).hide(1);
+							$("#tipo_servicio").hide(1).delay(1200).show(1);
+							var servicio = $(this).find("p").text();
+							$("#text-ordinario").append("TURNO GENERAL<br>"+servicio);
+							$("#text-preferencial").append("TURNO PREFERENCIAL<br>"+servicio);
+						}else{
+							alert('En este horario no se puede asignar turnos para el módulo seleccionado');
+						}
+					}else{
+						sessionStorage.setItem('id_servicio',$(this).attr('id'));
+						$("#text-ordinario").empty();
+						$("#text-preferencial").empty();
+						$("#servicios").hide();
+						$('#loading').show(1).delay(1200).hide(1);
+						$("#tipo_servicio").hide(1).delay(1200).show(1);
+						var servicio = $(this).find("p").text();
+						$("#text-ordinario").append("TURNO GENERAL<br>"+servicio);
+						$("#text-preferencial").append("TURNO PREFERENCIAL<br>"+servicio);
+					}
+                });
+
+                $("#atras").click(function (e) {
+                    $("#servicios").show();
+                    $("#tipo_servicio").hide();
+                });
+
+                function generacion_turno(tipo_turno) {
+                    var id_servicio = sessionStorage.getItem("id_servicio");
+                    $.ajax({
+                        url: '{% url "generacion_turnos" %}',
+                        type: 'post',
+                        data: {
+                            tipo_turno: tipo_turno,
+                            id_servicio: id_servicio,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        beforeSend: function () {
+                            $("#tipo_servicio").hide();
+                            $('.container-fluid').append("<div class='col-12' style='text-align:center;' id='loading'>" +
+                                "<img class='mt-3' src='/static/img/loading.gif'><br><p style='font-size:24pt;color: darkblue;'>Imprimiendo...</p>" +
+                                "</div>")
+                        },
+                        success: function (data) {
+                            if (data.ind == 1) {
+                                $("#ticket").show();
+                                $("#rango").show();
+                                $("#rango").empty();
+                                $("#fecha").empty();
+                                $("#turno").empty();
+                                $("#turno").show();
+                                $("#aviso_servicio").empty();
+                                $("#aviso_turno").empty();
+                                $("#aviso_servicio").append("TURNO PARA:");
+                                $("#aviso_turno").append(data.tipo_turno);
+                                $("#servicio").empty();
+                                $("#rango").append("<b>RANGO:</b> " + data.rango_ini + " - " + data.rango_fin);
+                                $("#fecha").append("<b>FECHA:</b> " + data.fecha);
+                                $("#turno").append(data.turno);
+                                $("#servicio").append(data.servicio);
+                            } else if (data.ind == 0) {
+                                $("#ticket").show();
+                                $("#servicio").empty();
+                                $("#aviso_servicio").empty();
+                                $("#aviso_turno").empty();
+                                $("#fecha").empty();
+                                $("#turno").hide();
+                                $("#rango").hide();
+                                $("#aviso_servicio").append("SERVICIO:");
+                                $("#aviso_turno").append("ESTIMADO USUARIO:");
+                                $("#servicio").append(data.servicio);
+                                if (data.servicio == "CITAS MEDICAS") {
+                                    $("#fecha").append("El horario de atención para este servicio es: <br><b>" + data.horario +
+                                        ".</b><br>Tambien puede pedir su cita médica a traves de nuestra pagina web:<br>" +
+                                        "<b>www.clinicadeespecialistasgirardot.com/chat</b><br> O a traves de nuestro PBX:<br><b>(031) 7943221</b>");
+                                } else {
+                                    $("#fecha").append("El horario de atención para este servicio es de " + data.horario);
+                                }
+                            }
+                            window.print();
+                        }, complete: function () {
+                            $("#servicios").show();
+                            $("#ticket").hide();
+                            $("#tipo_servicio").hide();
+                            $("#loading").remove();
+                        }
+                    });
+                    return false;
+                }
+
+                $("#ordinario").click(function (e) {
+                    var tipo_turno = "o";
+                    generacion_turno(tipo_turno);
+                    return false;
+                });
+
+                $("#preferencial").click(function (e) {
+                    var tipo_turno = "p";
+                    generacion_turno(tipo_turno);
+                    return false;
+                });
+            });
+        </script>
+    </body>
+</html>

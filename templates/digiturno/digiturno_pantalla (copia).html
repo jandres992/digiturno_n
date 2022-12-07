@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="Jorge Patiño">
+        <title>Digiturno - Pantalla</title>
+        <link rel="icon" href="/static/img/favicon.png">
+        <link href="/static/src/bootstrap-4/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/src/font-awesome/css/fontawesome.css" rel="stylesheet">
+        <style>
+            body{
+                overflow: hidden;
+            }
+            .right {
+                border-left: 5px solid rgba(0, 0, 0, 0.29);
+                bottom: 0px;
+                position: absolute;
+                top: 0px;
+                right: 0%;
+            }
+            .titulos{
+                padding-left: 0px;
+                padding-right: 0px;
+            }
+            .titulo-color{
+                background-color: #003d73!important;
+            }
+            video{
+                width: 100%;
+            }
+
+            /*variables */
+            .var-titulo {
+                font-weight: 800;
+                color: #002d5b;
+            }
+            .var-titulo-modulo {
+                font-weight: 700;
+            }
+            .turno-borde-color{
+                border-color: #00113b;
+            }
+            .turno-color{
+                background-color: #07194b;
+            }
+
+            .btn-dark-blue{
+                color: #fff;
+                background-color: #16507e;
+                border-color: #16507e;
+            }
+
+            .agenda-medica{
+                font-size: 30pt;
+                font-weight: 900;
+                color: red;
+            }
+            .agenda-medica-fecha{
+                font-size: 30pt;
+                font-weight: 900;
+            }
+            .agenda-medica-contenido{
+                font-size: 60pt;
+                font-weight: 900;
+            }
+
+            @media (min-width: 1678px) {
+                .var-titulo {
+                    font-size: 40pt;
+                }
+                .var-titulo-modulo{
+                    font-size: 30pt;
+                }
+                .turnos-plantilla {
+                    font-size: 50pt;
+                    font-weight: 900;
+                }
+                .turno-titulo-proyeccion{
+                    font-size: 60pt;
+                }
+                .turno-proyeccion{
+                    font-size: 80pt;
+                    font-weight: 800;
+                }
+            }
+            @media (max-width: 1677px) {
+                .var-titulo{
+                    font-size: 21pt;
+                }
+                .var-titulo-modulo{
+                    font-size: 16pt;
+                }
+                .turnos-plantilla {
+                    font-size: 36pt;
+                    font-weight: 900;
+                }
+                .turno-titulo-proyeccion{
+                    font-size: 40pt;
+                }
+                .turno-proyeccion{
+                    font-size: 70pt;
+                    font-weight: 800;
+                }
+            }
+        </style>
+        {% block stylesheet %}{% endblock %}
+    </head>
+    <body>
+        <div class="row">
+            <div class="col-9">
+                <div class="col-12 border-bottom mb-1">
+                    <div class="row">
+                        <div class="col-1 mt-2">
+                            <img src="/static/img/logo2.jpg" style="width: 100%">
+                        </div>
+                        <div class="col-11">
+                            <p class="var-titulo">SOCIEDAD DE ESPECIALISTAS GIRARDOT S.A.S</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12" id="videos">
+                    {% for l in listView %}
+                        <video id="listView-{{ l.order }}" style="display: none">
+                            <source src="{{ l.url }}" >
+                        </video>
+                    {% endfor %}
+                </div>
+
+                <div class="col-12">
+                    <p class="pb-0 mb-0 agenda-medica">Agenda disponible:</p>
+                    <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel" style="margin-top: -26px;">
+                        <div class="carousel-inner">
+                            {% for c in cmedicas %}
+                            <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">
+                                <p class="agenda-medica-contenido mb-0 pb-0">{{ c.especialidad.especialidad }}</p>
+                                <p class="agenda-medica-fecha pl-0 ml-0 mb-0 pb-0 mt-0 pt-0" style="margin-top: -23px !important;">A partir de {{ c.fecha }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-3 right">
+                <div class="row">
+                    <div class="col-6 mb-1 titulo-color">
+                        <div class="card text-center" style="border: 0px;">
+                            <div class="card-body titulos text-white titulo-color">
+                                <p class="card-title var-titulo-modulo">MODULO</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-1 text-center titulo-color">
+                        <div class="card text-center" style="border: 0px;">
+                            <div class="card-body titulos text-white titulo-color">
+                                <p class="card-title var-titulo-modulo">TURNO</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div id="turnos-pantalla" class="row"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 col-12" style="position: absolute;z-index:1;top:30%; left: 18%; display:none;" id="turno-pantalla">
+            <div class="row">
+                <div>
+                    <audio id="anuncio_turno" src=""></audio>
+                </div>
+                <div class="col-5">
+                    <div class="card text-center turno-borde-color">
+                        <div class="card-header text-white turno-color">
+                            <div class="card-title turno-titulo-proyeccion">TURNO</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title turno-proyeccion" id="turno-g">570</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="card text-center turno-borde-color">
+                        <div class="card-header text-white turno-color">
+                            <div class="card-title turno-titulo-proyeccion">MODULO</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title turno-proyeccion" id="modulo-g">5</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/static/src/jquery/jquery.js"></script>
+        <script src="/static/src/bootstrap-4/js/bootstrap.bundle.js"></script>
+        <script>
+            function agregarPantalla(data, i, no_turno) {
+                $('#turnos-pantalla').prepend(
+                    "<div class='col-5 text-center' id='modulo-plantilla" + data[i].id + "' >" +
+                    "    <div class='btn btn-dark-blue rounded mt-1 turnos-plantilla' style='padding-top: 0px; padding-bottom: 0px; width: 95px'> " +
+                    "        " + data[i].modulo +
+                    "    </div> " +
+                    "</div> " +
+                    "<div class='col-7 text-center' id='turno-plantilla" + data[i].id + "'> " +
+                    "    <div id='turno-" + data[i].modulo + "' class='card text-center mt-1 mb-1 rounded turnos-plantilla' style='padding-top: 0px; padding-bottom: 0px;'>" +
+                    "" + no_turno + "</div>" +
+                    "</div>"
+                );
+                return true;
+            }
+
+            function muted(){
+                if( $("video").prop('muted') ) {
+                      $("video").prop('muted', false);
+                } else {
+                  $("video").prop('muted', true);
+                }
+            }
+
+            setInterval( function() {
+                $.ajax({
+                    url:   '{% url "anuncios" %}',
+                    type:  'get',
+                    success:  function (data) {
+                        if (data != "") {
+                            $('#turno-g').text("");
+                            $('#modulo-g').text("");
+                            $('#turno-g').text(data['turno']);
+                            $('#modulo-g').text(data['modulo']);
+                            $('#turno-pantalla').show(5).delay(5000).hide(5);
+                            $("#anuncio_turno").removeAttr('src');
+                            $("#anuncio_turno").prop('src', data['audio']);
+                            muted();
+                            $("#anuncio_turno")[0].play();
+                            $.ajax({
+                                url:   '{% url "anuncio_save" %}',
+                                type:  'get',
+                                data: {'id-digiturno': data['id']}
+                            });
+                            setTimeout(muted, 5000);
+                        }
+                    }
+
+                });
+            },5000);
+
+            function sleep(milliseconds) {
+                var start = new Date().getTime();
+                    for (var i = 0; i < 1e7; i++) {
+                        if ((new Date().getTime() - start) > milliseconds){
+                        break;
+                    }
+                }
+            }
+
+            setInterval( function() {
+                $.ajax({
+                    url:   '{% url "proyeccion_turnos" %}',
+                    type:  'get',
+                    success:  function (data) {
+                        for (var i = 0, limit = (data).length; i < limit; i++) {
+                            var no_turno = data[i].turno;
+                            if (no_turno < 10){
+                                no_turno = "00"+no_turno;
+                            }else if (no_turno < 100){
+                                no_turno = "0"+no_turno;
+                            }
+
+                            if ( no_turno == "000"){
+                                no_turno = "N/D"
+                            }
+
+                            if($('#turno-plantilla'+data[i].id).length > 0){
+                                if ($('#turno-'+data[i].id).text()!=no_turno){
+                                     $('#turno-plantilla'+data[i].id).remove();
+                                     $('#modulo-plantilla'+data[i].id).remove();
+                                     agregarPantalla(data, i, no_turno);
+                                }
+                            }else {
+                                agregarPantalla(data, i, no_turno);
+                            }
+                        }
+                    }
+                })
+            },2000);
+
+            setInterval( function() {
+                $.ajax({
+                    url:   '{% url "estado_modulo" %}',
+                    type:  'get'
+                });
+            },60000);
+
+            $(window).ready(function(){
+                /*muted();
+                $('#videos video').prop("volume", 0.5);*/
+                var videos = $('#videos video').length;
+                localStorage.setItem("cont", 1);
+                localStorage.setItem("videos", videos);
+                $("#listView-1").show();
+                $('#listView-1').get(0).play();
+            });
+
+            {% for lv in listView %}
+            $("#listView-{{ lv.order }}").on('ended', function(){
+                var cont = localStorage.getItem('cont');
+                var videos = localStorage.getItem('videos');
+                if (parseInt(cont) < parseInt(videos)){
+                    cont = parseInt(cont) +1;
+                    $('#listView-{{ lv.order }}').hide();
+                    $('#listView-'+cont).show();
+                    $('#listView-'+cont).get(0).play();
+                    localStorage.setItem("cont", cont);
+                } else {
+                    $('#listView-'+cont).hide();
+                    $('#listView-1').show();
+                    $('#listView-1').get(0).play();
+                    localStorage.setItem("cont", 1);
+                }
+            });
+            {% endfor %}
+        </script>
+    </body>
+</html>

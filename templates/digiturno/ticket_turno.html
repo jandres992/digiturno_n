@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="Jorge Andres Patiño">
+        <title>Digiturno SEG S.A.S</title>
+        <link rel="icon" href="/static/img/favicon.png">
+        <link href="/static/src/bootstrap-4/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/src/font-awesome/css/all.css" rel="stylesheet">
+        <link href="/static/src/notificacion/css/animate.css" rel="stylesheet">
+
+        <style>
+            @media print {
+                @page {
+                    size: 8cm 5cm;
+                    size: portrait;
+                    margin: 10px;
+                }
+
+            }
+        </style>
+    </head>
+
+    <body>
+        <table>
+            <tr>
+                <td><img src="/static/img/logo2.jpg" width="160" height="170"></td>
+                <td>
+                    <div style="font-size: 12pt;font-weight: 600; margin-left:2px">SU TURNO:</div>
+                    <div style="font-size: 90pt;font-weight: 900;margin-top: -48px">088</div>
+                    <div style="font-size: 12pt;margin-top: -30px"><b>RANGO:</b> 1 - 199</div>
+                    <div style="font-size: 12pt;margin-top: -5px"><b>FECHA:</b> 28/11/2019 10:53:18 AM</div>
+                </td>
+            </tr>
+            <tr>
+               <td colspan="2">
+                   <div style="font-size: 13pt;margin-top: -5px;">TURNO PARA:</div>
+                   <div style="font-size: 16pt;font-weight: 900;margin-top: -5px;">CITAS MEDICAS</div>
+                   <div style="font-size: 18pt;font-weight: 900;text-align: center;">SOCIEDAD DE ESPECIALISTAS</div>
+                   <div style="font-size: 18pt;font-weight: 900;text-align: center;margin-top: -17px;">GIRARDOT S.A.S</div>
+               </td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td><img src="/static/img/logo.png" width="380" height="110"></td>
+            </tr>
+            <tr>
+                <td style="padding-left: 1.2cm; padding-bottom: 20px;">
+                    <div style="font-size: 18pt; font-weight: 900; margin-left:2px">TURNO</div>
+                    <div style="font-size: 90pt; font-weight: 900; margin-top: -48px">{{ ticket_turno }}</div>
+                    <div style="font-size: 18pt; margin-top: -30px">RANGO: <b>{{ ticket_rango }}</b></div>
+                    <div style="font-size: 18pt; margin-top: -5px;">FECHA: <b style="font-weight: 900;">{{ ticket_fecha }}</b></div>
+                    <div style="font-size: 18pt; margin-top: -5px;">PACIENTE: <b style="font-weight: 900;">{{ ticket_persona }}</b></div>
+                </td>
+            </tr>
+            <tr>
+               <td colspan="2">
+                   <div style="font-size: 16pt;margin-top: -5px;"> {{ ticket_tp_turno }}</div>
+                   <div style="font-size: 18pt;font-weight: 900;margin-top: -5px;">{{ ticket_servicio }}</div>
+                   <div style="font-size: 10pt;font-weight: 800;text-align: center;text-transform: uppercase;">{{ empresa.razon_social }}</div>
+               </td>
+            </tr>
+        </table>
+
+    </body>
+</html>

@@ -1,0 +1,139 @@
+{% extends 'admin/plantilla.html' %}
+
+{% block title %}
+    Usuarios del Sistema - <small>Configuración</small>
+{% endblock %}
+
+{% block breadcum %}
+    <li class="breadcrumb-item">
+        <i class="fa fa-users"></i> Configuración
+    </li>
+    <li class="breadcrumb-item active">
+        <i class="fa fa-cogs"></i> Usuario
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <div class="card border-primary" style="border-radius: .3rem;">
+                <form class="form-horizontal" method="post"  action="{% url 'usuarios' %}" >{% csrf_token %}
+                    <div class="card-header bg-primary text-white">
+                        <i class="fa fa-user-plus"></i> Crear Usuario
+                    </div>
+                    <div class="card-body" style="font-size: 10pt;">
+                        <div class="row">
+                            <div class="col-sm-8 col-12">
+                                <label>Username:</label>
+                                <input class="form-control form-control-sm" name="username" type="text" required />
+                            </div>
+                            <div class="col-sm-4 col-12">
+                                <label>Tipo de Usuario:</label>
+                                <select class="form-control form-control-sm" name="grupo" required>
+                                    <option value="">Seleccione</option>
+                                    {% for grupo in grupo %}
+                                        <option value="{{ grupo.id }}">{{ grupo.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-6 col-12">
+                                <label>Nombres:</label>
+                                <input class="form-control form-control-sm" name="nombre" type="text" required />
+                            </div>
+                            <div class="col-sm-6 col-12">
+                                <label>Apellidos:</label>
+                                <input class="form-control form-control-sm" name="apellido" type="text" required />
+                            </div>
+                            <div class="col-12">
+                                <hr>
+                            </div>
+                            <div class="col-12">
+                                <label>Correo eléctronico</label>
+                                <input class="form-control form-control-sm" name="email" type="email">
+                            </div>
+                            <div class="col-12">
+                                <hr>
+                            </div>
+                            <div class="col-6">
+                                <label class="control-label">Contraseña:</label>
+                                <input name="password" id="password" class="form-control form-control-sm" type="password" required />
+                            </div>
+                            <div class="col-6">
+                                <label class="control-label">Confirmar contraseña:</label>
+                                <input name="rpassword" id="rpassword" class="form-control form-control-sm" type="password" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer border-primary">
+                        <div class="row">
+                            <div class="col-12">
+                                <button class="btn btn-success btn-sm btn-block pull-right" type="submit"><i class="fa fa-check"></i> Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6 col-12">
+            <div class="card border-dark" style="height: 100%">
+                <div class="card-header bg-dark text-white">
+                    <i class="fa fa-table fa-fw"></i> Usuarios del Sistema
+                </div>
+                <div class="card-body p-1 background-table-color" style="font-size: 9pt;">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table class="table tabla table-bordered bg-light dataTable text-center" id="dataTable" width="100%" cellspacing="0">
+                                    <thead class="alert-dark">
+                                        <tr>
+                                            <th>Usuario</th>
+                                            <th>Nombre</th>
+                                            <th>Perfil</th>
+                                            <th>Activar</th>
+                                            <th>Desactivar</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot class="alert-dark">
+                                        <tr>
+                                            <th>Usuario</th>
+                                            <th>Nombre</th>
+                                            <th>Perfil</th>
+                                            <th>Activar</th>
+                                            <th>Desactivar</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                    {% for usr in usuarios %}
+                                        <tr{% if usr.is_active == False %} class="alert-danger"{% endif %}>
+                                            <td>{{ usr.username }}</td>
+                                            <td>{{ usr.nombre }}</td>
+                                            <td>{% for p in usr.perfil %}{{ p }}<br>{% endfor %}</td>
+                                            <td>
+                                                <form method="get" action="{% url 'usuarios' %}">
+                                                    <button class="btn btn-success btn-xs" type="submit" name="habilitar_usuario" value="{{ usr.id }}" {% if usr.is_active == True %} disabled {% endif %}><i class="fa fa-check"></i></button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <form method="get" action="{% url 'usuarios' %}">
+                                                    <button class="btn btn-danger btn-xs" type="submit" name="inhabilitar_usuario" value="{{ usr.id }}" {% if usr.is_active == False %} disabled {% endif %}><i class="fa fa-ban"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top: 40px"></div>
+{% endblock %}
+{% block scripts %}
+    <!-- datatTables -->
+    <script src="/static/src/datatables/jquery.dataTables.js"></script>
+    <script src="/static/src/datatables/dataTables.bootstrap4.js"></script>
+    <script src="/static/src/datatables/custom-datatables.js"></script>
+{% endblock %}

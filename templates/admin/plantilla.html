@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>Digiturno SEG S.A.S</title>
+        <link rel="icon" href="/static/img/favicon.png">
+        <link href="/static/src/bootstrap-4/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/src/notificacion/css/animate.css" rel="stylesheet">
+        <link href="/static/src/font-awesome/css/all.css" rel="stylesheet" type="text/css">
+        <style>
+            .card-body-icon {
+                /*position: absolute;*/
+                z-index: 0;
+                /*top: -25px;
+                right: -25px;*/
+                font-size: 5rem;
+                -webkit-transform: rotate(15deg);
+                -ms-transform: rotate(15deg);
+                transform: rotate(15deg);
+            }
+            .flex{
+                display: -ms-flex;
+                display: -webkit-flex;
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+            }
+            :hover {
+                text-decoration: none;
+            }
+            ::-webkit-scrollbar {
+                width: 12px;
+            }
+            ::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+                border-radius: 10px;
+            }
+            ::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                -webkit-box-shadow: inset 0 0 7px rgba(37, 102, 204, 0.99);
+            }
+        </style>
+        {% block style %}{% endblock %}
+    </head>
+
+    <body style="margin-top: 2cm;" onload="notificacion('{{ ind }}','{{ aviso }}');">
+        <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm fixed-top">
+            <img class="my-0 mr-md-auto" src="/static/img/logo3.png" style="width:10%">
+            <nav class="my-2 my-md-0 mr-md-5">
+                <a class="text-dark pr-3" style="text-decoration: none" href="{% url 'menu_admin' %}"><i class="fa fa-home"></i> Inicio</a>
+                {% for per in permisos %}
+                    {% if per == "Administrador" %}
+                    <a class="dropdown-toggle text-dark" href="#" style="text-decoration: none" role="button" id="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-cogs"></i> Configuración
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown">
+                        <a class="dropdown-item" href="{% url 'usuarios' %}"><i class="fa fa-users"></i>&emsp;Usuarios</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+            </nav>
+            <a class="pr-2">
+                <i class="fa fa-user"></i>&emsp;{{ user.first_name }} {{ user.last_name }}
+            </a>
+            <a class="btn btn-outline-primary" href="{% url 'salir' %}">Salir</a>
+        </div>
+
+        <div class="col-12 pt-3">
+            <h2>
+                {% block title %}{% endblock %}
+            </h2>
+            <ol class="breadcrumb p-0 pl-2 pr-2">
+                <li class="breadcrumb-item">
+                    <i class="fa fa-home"></i> Inicio
+                </li>
+                {% block breadcum %}{% endblock %}
+            </ol>
+            <div class="row">
+                <div class="col-12">
+                  {% block content %}{% endblock %}
+                </div>
+            </div>
+
+            <footer class="sticky-footer">
+                <div class="container">
+                    <div class="text-center text-white">
+                        <small>©2019 | Sociedad de Especialistas Girardot</small>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="/static/src/jquery/jquery.js"></script>
+        <script src="/static/src/bootstrap-4/js/bootstrap.bundle.min.js"></script>
+        <script src="/static/src/bootstrap-4/js/bootstrap.min.js"></script>
+        <!-- Notificacion -->
+        <script src="/static/src/notificacion/bootstrap_notify/bootstrap-notify.min.js"></script>
+        <!-- Custom scripts -->
+        <script src="/static/js/notificacion.js"></script>
+        {% block scripts%}{% endblock %}
+        <script>
+        </script>
+    </body>
+</html>

@@ -1,0 +1,97 @@
+{% extends 'admin/plantilla.html' %}
+
+{% block title %}
+    Digiturno - Información General
+{% endblock %}
+
+{% block content %}
+    <div class="card border-secondary">
+        <div class="card-header border-secondary bg-secondary text-white">
+            <i class="fa fa-clock"></i>&emsp; Turnos pendientes
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for t in turnos %}
+                <div class="col-lg-3 col-md-4 col-12">
+                    <div class="card mb-3">
+                        <div class="card-body p-0 pl-2 pr-2 text-white" style="background-color: {{ t.color}}">
+                            <div class="row">
+                                <div class="col-7 p-0 pl-4 card-body-icon">
+                                    <i class="fa fa-fw fa-{{ t.icon }}"></i>
+                                </div>
+                                <div class="col-5 flex p-0 m-0">
+                                    <p class="turnos-{{ t.id }}" style="font-size: 46pt;">{{ t.no_turnos }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center text-white" style="font-weight:700;font-size: 12pt; background-color: {{ t.color}}">
+                            {{ t.nombre }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-info mt-4">
+        <div class="card-header border-info bg-info text-white">
+            <i class="fa fa-bars"></i>&emsp;Estadistica
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <canvas id="barChart"></canvas>
+                </div>
+                <div class="col-6">
+                    <canvas id="facturacionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block style %}
+    <link href="/static/src/chart/css/Chart.min.css" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block scripts%}
+    <script src="/static/src/chart/js/Chart.min.js"></script>
+    <script>
+        new Chart(document.getElementById("barChart"), {
+            type: 'bar',
+            data: {
+                labels: [{% for m in modulos %}"Modulo-{{ m.modulo }}",{% endfor %}],
+                datasets: [
+                    {% for e in estadistica %}
+                        {label: "{{ e.servicio }}", backgroundColor: "{{ e.color }}", data:{{ e.turnos }}},
+                    {% endfor %}
+                ]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Turnos Atendidos por Módulo'
+                }
+            }
+        });
+
+        new Chart(document.getElementById("facturacionChart"), {
+            type: 'pie',
+            data: {
+                labels: [{% for f in facturadores %}"{{ f.facturador }}",{% endfor %}],
+                datasets: [{
+                    label: "Population (millions)",
+                    backgroundColor: [{% for f in facturadores %}"{{ f.color }}",{% endfor %}],
+                    data: [{% for f in facturadores %}{{ f.turnos_a }},{% endfor %}]
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Facturación Consulta Externa - total:{{ total }}'
+                }
+            }
+        });
+    </script>
+{% endblock %}
+

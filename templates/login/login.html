@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="/static/img/favicon.png">
+        <title>Ingreso - Digiturno SEG S.A.S</title>
+        <link href="/static/src/bootstrap-4/css/bootstrap.css" rel="stylesheet">
+        <link href="/static/css/login.css" rel="stylesheet">
+        <link href="/static/src/notificacion/css/animate.css" rel="stylesheet">
+        <link href="/static/src/font-awesome/css/all.css" rel="stylesheet" type="text/css">
+    </head>
+
+    <body class="justify-content-center" onload="notificacion('{{ ind }}','{{ aviso }}');" style="background-color: #ffffff">
+        <div class="card text-center" style="padding: 2%; background-color: #3b5998 !important;border-radius: 0.3cm">
+            <form class="form-signin" method="post" action="{% url 'entrar' %}">{% csrf_token %}
+                <img class="mb-4" src="/static/img/logo.jpg" alt="" width="92" height="110">
+                <h4 class="h3 mb-3 font-weight-bold text-white" style="font-weight: 900 !important; font-family: 'Verdana'">
+                    Digiturno
+                </h4>
+                <input class="form-control" type="text" placeholder="Usuario" name="username" id="username" required autofocus autocomplete="off">
+                <input class="form-control" type="password" placeholder="Contraseña" name="password" id="password" required autocomplete="off">
+                <select class="form-control" type="text" name="modulo" id="modulo" required autocomplete="off">
+                    <option value="">Seleccione Módulo</option>
+                    <option value="0">Adminitración</option>
+                    {% for m in modulos %}
+                        <option value="{{ m.modulo }}">Módulo - {{ m.modulo }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-lg btn-success btn-block" type="submit">
+                    <i class="fa fa-check-circle"></i>&nbsp;Ingresar
+                </button>
+                <p class="mt-5 mb-3 text-white">&copy; 2019 | Sociedad de Especialistas Girardot S.A.S</p>
+            </form>
+        </div>
+
+        <script src="/static/src/jquery/jquery.js"></script>
+        <script src="/static/src/notificacion/bootstrap_notify/bootstrap-notify.min.js"></script>
+        <!-- Custom scripts -->
+        <script src="/static/js/notificacion.js"></script>
+        <script>
+            $(window).ready(function(){
+                if ('modulo' in localStorage){
+                    $("#modulo option[value="+ localStorage.getItem('modulo') +"]").attr("selected",true);
+                }
+            });
+
+            $('#modulo').focusout(function e() {
+                localStorage.setItem('modulo',$(this).val());
+            });
+        </script>
+    </body>
+</html>
+
